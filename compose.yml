@@ -1,0 +1,27 @@
+
+services:
+  frontend:
+    container_name: react
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - node_modules:/app/node_modules
+  backend:
+    container_name: django
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+  # nginx:
+  # db:
+
+
+
+volumes:
+  node_modules:
+# networks:
+#   sowit:
+#     driver: bridge

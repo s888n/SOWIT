@@ -53,3 +53,5 @@ map to the selected plot.
 ## Resources
 
 - [Django-allauth](https://docs.allauth.org/en/latest/)
+
+

@@ -1,7 +1,7 @@
-# from django.db import models
+from django.db import models
 
 # # Create your models here.
-# from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser
 
-# class CustomUser(AbstractUser):
-#     pass
+class User(AbstractUser):
+    avatar = models.ImageField(upload_to='avatars/', default='avatars/default.jpg')

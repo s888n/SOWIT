@@ -15,8 +15,8 @@ export function Bee(props) {
   const { nodes, materials, animations } = useGLTF('/models/bee.glb')
   const { actions } = useAnimations(animations, group)
   useEffect(() => {
-		actions["Animation"].reset().fadeIn(0.5).play();
-		return () => actions["Animation"].fadeOut(0.5);
+		actions["Animation"]?.reset().fadeIn(0.5).play();
+		return () => actions["Animation"]?.fadeOut(0.5);
 	}, [actions]);
   return (
     <group ref={group} {...props} dispose={null}>

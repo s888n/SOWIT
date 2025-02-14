@@ -2,6 +2,19 @@ import { useRef, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 // import MapSearch from "./map-searchbox";
 import "mapbox-gl/dist/mapbox-gl.css";
+import "mapbox-gl-style-switcher/styles.css";
+import GlobeMinimap from "mapbox-gl-globe-minimap";
+import { MapboxStyleDefinition, MapboxStyleSwitcherControl } from "mapbox-gl-style-switcher"
+const styles: MapboxStyleDefinition[] = [
+  {
+      title: "Dark",
+      uri:"mapbox://styles/mapbox/dark-v11"
+  },
+  {
+      title: "Light",
+      uri:"mapbox://styles/mapbox/light-v11"
+  }
+];
 
 export function Map() {
   const mapRef = useRef<unknown | null>(null);
@@ -14,23 +27,31 @@ export function Map() {
     },
     trackUserLocation: true
 });
-// Add the control to the map.
 useEffect(() => {
-  mapboxgl.accessToken =
-  "pk.eyJ1Ijoic3JhY2hkaSIsImEiOiJjbTZ3ZDBlNDkwaGVsMmtza2tlbWJ1ZTl5In0.MPXsQSgDRg73oG5-oRrggw";
-  
-  // mapboxgl.accessToken = 'pk.eyJ1Ijoic3JhY2hkaSIsImEiOiJjbTZ3ZDBlNDkwaGVsMmtza2tlbWJ1ZTl5In0.MPXsQSgDRg73oG5-oRrggw'
+  mapboxgl.accessToken = "pk.eyJ1Ijoic3JhY2hkaSIsImEiOiJjbTZ3ZDBlNDkwaGVsMmtza2tlbWJ1ZTl5In0.MPXsQSgDRg73oG5-oRrggw";
   mapRef.current = new mapboxgl.Map({
     container: mapContainerRef.current,
     center: [-91.874, 42.76],
     zoom: 5,
   });
   
-  mapRef.current.addControl(fullScreen);
-  mapRef.current.addControl(navigation);
-  mapRef.current.addControl(geolocate);
+  
+  mapRef.current.on("load", function () {
+    mapRef.current.addControl(fullScreen);
+    mapRef.current.addControl(navigation);
+    mapRef.current.addControl(geolocate);
+    mapRef.current.addControl(
+        new GlobeMinimap({
+            landColor: "#4ebf6e",
+            waterColor: "#8dcbe3"
+        }),
+        "bottom-left"
+    );
+    mapRef.current.addControl(new MapboxStyleSwitcherControl(styles, 'Dark'));
+});
+
     return () => {
-      mapRef.current.remove();
+      mapRef.current?.remove();
     };
   }, []);
   return (

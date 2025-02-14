@@ -1,16 +1,4 @@
-// import { Header } from "@/components/dashboard-header";
-
-// export default function DashboardPage() {
-
-//     return (
-//         <div className="flex flex-col h-screen">
-//             <Header username="John Doe" />
-//             <main className="flex-1 p-6 ">
-//                 <h1 className="text-2xl font-semibold text-center">Dashboard</h1>
-//             </main>
-//         </div>
-//     );
-//     }
+import { useAuth } from "@/contexts/auth-context";
 
 import { Header } from "@/components/dashboard-header";
 import { PolygonList } from "@/components/polygon-list";
@@ -55,9 +43,12 @@ const mockPolygons = [
 ];
 
 export default function Home() {
+
+    const {user} = useAuth();
+    console.log(user);
     return (
       <div className="min-h-screen flex flex-col">
-        <Header username="John Doe" />
+        <Header username={user?.username} avatar={user?.avatar} />
         <div className="flex flex-col md:flex-row flex-1">
           <div className="w-full md:w-2/5 lg:w-1/3 p-4 border-b md:border-b-0 md:border-r order-last md:order-first">
             <h2 className="text-xl font-semibold mb-4">Polygons</h2>

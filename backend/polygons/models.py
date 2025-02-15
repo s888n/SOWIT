@@ -1,26 +1,14 @@
-# from django.contrib.gis.db import models
+from django.db import models
+from django.conf import settings
 
-# class Polygon(models.Model):
-#     color = models.CharField(max_length=7, default="#007bff")
-#     name = models.CharField(max_length=100)
-#     geom = models.PolygonField()
-#     area = models.FloatField()
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-
-#     def save(self, *args, **kwargs):
-#         self.area = self.calculate_area()
-#         self.perimeter = self.calculate_perimeter()
-#         super().save(*args, **kwargs)
-
-#     def calculate_area(self):
-#         # Calculate area of polygon
-#         return 0
-
-#     def calculate_perimeter(self):
-#         # Calculate perimeter of polygon
-#         return 0
-
-#     def __str__(self):
-#         return self.name
+class Polygon(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100, unique=True)
+    color = models.CharField(max_length=7, default="#87CEFA")
+    area = models.FloatField(default=0)
+    geometry = models.JSONField()
+    image = models.ImageField(upload_to='polygons/', default='polygons/default.png')
+    region = models.CharField(max_length=100, default="unknown")
+    def __str__(self):
+        return self.name
 

@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import { ModeToggle } from "./components/mode-toggle";
 import Page404 from "./app/404/page";
 import { AuthProvider } from "./contexts/auth-context";
-import Protected from "./components/private-route";
+import PrivateRoute from "./components/private-route";
 
 function App() {
   return (
@@ -13,9 +13,14 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-            <Route  element={<Protected />} >
-            <Route path="/" element={<DashboardPage />} />
-              </Route>
+            <Route
+              path="/"
+              element={
+                <PrivateRoute>
+                  <DashboardPage />
+                </PrivateRoute>
+              }
+            />
             <Route path="/auth" element={<LoginPage />} />
             <Route path="*" element={<Page404 />} />
           </Routes>

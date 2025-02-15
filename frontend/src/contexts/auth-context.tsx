@@ -1,89 +1,130 @@
-import { createContext, useState, useEffect, useContext } from "react";
-import { getAPI,postAPI } from "@/api/axios";
+import { createContext, useState, useEffect, useContext} from "react";
+import axios from "axios";
+
+const BASE_URL = "http://localhost:8000/api";
+
+const api = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true,
+});
+
 interface User {
   id: string;
   avatar: string;
-  name: string;
+  username: string;
 }
 
 export type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
-  setIsAuthenticated: (value: boolean) => void;
-  login: (username: string, password: string) => void;
-  register: (username: string, password: string, password2: string) => void;
-  logout: () => void;
   getUser: () => void;
-  refreshToken: () => void;
+  loginUser: (username: string, password: string) => void;
+  registerUser: (username: string, password: string, password2: string) => void;
+  logoutUser: () => void;
+  loginWithGithub: (code: string) => void;
   loading: boolean;
+  setLoading: (value: boolean) => void;
 };
 
 const AuthContext = createContext({} as AuthContextType);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
 
-  // const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState<string | null>(null);
-  // the token are stored in the cookie so no need to store it in the state and are handled by the backend
 
-  const login = async (username: string, password: string) => {
-    return postAPI("/login/", { username, password });
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const response = await api.get("/user/");
+        console.log(response)
+        if (response.status === 200) {  // Or another suitable success code
+          setIsAuthenticated(true);
+          // setUser(response.data);
+        } else {
+            throw new Error('Failed to authenticate');
+        }
+      } catch (error) {
+        setIsAuthenticated(false);
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuthStatus();
+  }, []);
+
+  const loginUser = async (username: string, password: string) => {
+    const response = await api.post("/login/", { username, password });
+    if (response.status === 200) {
+      setIsAuthenticated(true);
+      setUser(response.data);
+    }
+  };
+  const registerUser = async (
+    username: string,
+    password: string,
+    password2: string
+  ) => {
+    const response = await api.post("/register/", {
+      username,
+      password,
+      password2,
+    });
+    if (response.status === 201) {
+      setIsAuthenticated(true);
+      setUser(response.data);
+    }
   };
 
-  const register = async (username : string, password: string, password2: string) => {
-    return postAPI("/register/", { username, password, password2 });
-  }
-
-  const logout = async () => {
-    const response = await postAPI("/logout/",{});
+  const loginWithGithub = async (code: string) => {
+    const response = await api.post("/github/", { code });
     if (response.status === 200) {
-      setIsAuthenticated(false);
-      setUser(null);
-      // navigate("/auth");
-    }
-
-  }
-  const getUser = async () => {
-    const response = await getAPI("/user/");
-    if (response.status === 200) {
+      setIsAuthenticated(true);
       setUser(response.data);
     }
   }
 
-  const refreshToken = async () => {
-    return getAPI("/refresh/");
-  }
+  const logoutUser = async () => {
+    const response = await api.post("/logout/");
+    if (response.status === 200) {
+      setIsAuthenticated(false);
+      setUser(null);
+    }
+  };
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const response = await getAPI("/user/");
-      if (response.status === 200) {
-        setIsAuthenticated(true);
-        setUser(response.data);
-      }
-      setLoading(false);
-    };
-    checkAuth();
-  }
-  , [isAuthenticated]);
+  const getUser = async () => {
+    const response = await api.get("/user/");
+    if (response.status === 200) {
+      setUser(response.data);
+    }
+  };
+
+  // const refreshToken = async () => {
+  //   return getAPI("/refresh/");
+  // };
+  const contextData = {
+    isAuthenticated,
+    user,
+    loginUser,
+    registerUser,
+    logoutUser,
+    loading,
+    setLoading,
+    loginWithGithub,
+    getUser,
+  };
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated,
-        setIsAuthenticated,
-        login,
-        register,
-        logout,
-        getUser,
-        refreshToken,
-        loading,
-      }}
-    >
-      {children}
+    <AuthContext.Provider value={contextData}>
+      {!loading ? children : <div>Loading...</div>}
     </AuthContext.Provider>
   );
 };

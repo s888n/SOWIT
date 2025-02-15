@@ -4,15 +4,15 @@ import { useTheme } from "./theme-provider";
 import Logo from "@/assets/Logo.png";
 import LogoDark from "@/assets/LogoDark.png";
 interface HeaderProps {
-  username: string;
-  avatar: string;
+  username: string | null;
+  avatar: string | null;
 }
 import { useAuth } from "@/contexts/auth-context";
 export function Header({ username, avatar }: HeaderProps) {
-  const { logout } = useAuth();
+  const { logoutUser } = useAuth();
   const { theme } = useTheme();
   return (
-    <header className="flex items-center justify-between px-6 py-4  border-b">
+    <header className="flex items-center justify-between px-6 py-4  border-b z-10">
       <div className="flex items-center">
         <img
           src={theme === "dark" ? LogoDark : Logo}
@@ -28,9 +28,9 @@ export function Header({ username, avatar }: HeaderProps) {
             src={`http://127.0.0.1:8000` + avatar}
             alt={`${username}'s avatar`}
           />
-          <AvatarFallback>{username.slice(0, 1).toUpperCase()}</AvatarFallback>
+          <AvatarFallback>{username ? username.slice(0, 1).toUpperCase() : ''}</AvatarFallback>
         </Avatar>
-        <Button variant="outline" onClick={() => logout()}>
+        <Button variant="outline" onClick={() => logoutUser()}>
           Log out
         </Button>
       </div>

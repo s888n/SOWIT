@@ -39,45 +39,6 @@ def store_tokens_in_cookie(response, access_token, refresh_token):
     )
 
 
-# # # Create your views here.
-# # class GoogleLinkView(APIView):
-# #     """
-# #         get google link
-# #     """
-# #     permission_classes = [AllowAny]
-# #     authentication_classes = []
-# #     def get(self, request):
-# #         url =  get_url(request, settings.GOOGLE_REDIRECT_URI)
-# #         data = f'https://accounts.google.com/o/oauth2/v2/auth?client_id={settings.GOOGLE_ID}&scope=openid profile email&response_type=code&display=popup&redirect_uri={url}'
-# #         return Response(data, status=status.HTTP_200_OK)
-# def get_access_token_from_api(token_endpoint, payload):
-#     response = requests.post(token_endpoint, params=payload)
-#     return response.json().get('access_token')
-# def get_access_token_google(redirect_url: str, authorization_code: str) -> str:
-#     token_endpoint = 'https://oauth2.googleapis.com/token'
-#     payload = {
-#         'code': authorization_code,
-#         'client_id': settings.GOOGLE_ID,
-#         'client_secret': settings.GOOGLE_SECRET,
-#         'redirect_uri': redirect_url,
-#         'grant_type': 'authorization_code'
-#     }
-#     return get_access_token_from_api(token_endpoint, payload)
-
-# def get_url(request, path="/") -> str:
-#     return request.build_absolute_uri(path).replace("http://", "https://")
-
-# class GoogleLoginView(APIView):
-#     permission_classes = [AllowAny]
-#     authentication_classes = []
-
-#     def get(self, request):
-#         code = request.query_params.get('code')
-#         if not code:
-#             return Response(status=status.HTTP_400_BAD_REQUEST)
-#         url = get_url(request, "/callBack/google")
-
-
 
 class GithubLoginView(APIView):
     permission_classes = [AllowAny]

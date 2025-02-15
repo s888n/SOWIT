@@ -51,13 +51,14 @@ class LoginSerializer(serializers.Serializer):
 class GithubLoginSerializer(serializers.Serializer):
     code = serializers.CharField()
 
-    def validate_code(self, code):
+    def validate(self, data):
+        code = data.get('code')
         access_token = Github.exchange_code_for_token(code)
-
         if access_token:
             user_data = Github.get_github_user(access_token)
-            username = user_data['login']
-            avatar_url = user_data['avatar_url']
+            print(user_data)
+            username = user_data.get('login')
+            avatar_url = user_data.get('avatar_url')
             user = User.objects.filter(username=username).first()
             if user:
                 return {'user': user}

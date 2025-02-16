@@ -10,6 +10,10 @@
 
 ## Demo
 
+
+https://github.com/user-attachments/assets/ccc3734f-9187-4414-9c2a-d07864927c80
+
+
 ## Description
 
 Using the Mapbox API, users can create polygons on the map and save them to the database. Users can also view and delete the polygons they have created.
@@ -29,7 +33,6 @@ Using the Mapbox API, users can create polygons on the map and save them to the 
 
 ## Installation
 
-### Frontend
 
 - Clone the repository
 - Create a `.env` file in the root directory and provide the environment variables like in the `.env.example` file

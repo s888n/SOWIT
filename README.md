@@ -48,7 +48,7 @@ Using the Mapbox API, users can create polygons on the map and save them to the 
 - Mapbox Integration
 - Create, Save , View and delete Polygons on the map
 
-## Futures i will add in the future
+## Features i will add in the future
 
 - User prifile ans settings
 - Edit the polygons data (90 % done)

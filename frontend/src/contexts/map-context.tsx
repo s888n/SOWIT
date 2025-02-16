@@ -2,7 +2,7 @@
 //  Creating a context for the map
 // a user can :
 // - draw a polygon on the map , once the polygon is drawn a popup should appear asking for
-//     the name and color of the polygon and also display the area and region and image of the polygon
+//     the name and color of the polygon and also display the area and image of the polygon
 
 //  each polygon card should have 3 buttons:
 // - delete a polygon
@@ -21,56 +21,6 @@
 //  - /api/polygons/:id - DELETE => deletes a polygon
 //  - /api/polygons/:id - PUT => updates a polygon
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import axios from "axios";
-const axiosconfig = {
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true,
-};
-// const mockPolygons = [
-//   {
-//     id: "1",
-//     color: "red",
-//     thumbnail: "/polygon.png",
-//     name: "Polygon 1",
-//     region: "North",
-//     area: 100,
-//   },
-//   {
-//     id: "2",
-//     color: "red",
-//     thumbnail: "/polygon.png",
-//     name: "Polygon 2",
-//     region: "South",
-//     area: 150,
-//   },
-//   {
-//     id: "3",
-//     color: "red",
-//     thumbnail: "/polygon.png",
-//     name: "Polygon 3",
-//     region: "East",
-//     area: 200,
-//   },
-//   {
-//     id: "4",
-//     color: "red",
-//     thumbnail: "/polygon.png",
-//     name: "Polygon 4",
-//     region: "West",
-//     area: 120,
-//   },
-//   {
-//     id: "5",
-//     color: "red",
-//     thumbnail: "/polygon.png",
-//     name: "Polygon 5",
-//     region: "Central",
-//     area: 180,
-//   },
-// ];
-
 import { getPolygons } from "@/api/api";
 export const MapContext = createContext<any>(null);
 

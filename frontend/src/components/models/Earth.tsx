@@ -1,13 +1,16 @@
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
+import * as THREE from 'three'
+
 export function Earth(props) {
-  const earthRef = useRef()
+  const earthRef = useRef<THREE.Group>(null)
   const { nodes, materials } = useGLTF('/models/earth.glb')
   useFrame((_, delta) => {
-    earthRef.current.rotation.y += delta * 0.5
-  }
-  )
+    if (earthRef.current) {
+      earthRef.current.rotation.y += delta * 0.5
+    }
+  })
   return (
     <group {...props} dispose={null} ref={earthRef}>
       <mesh

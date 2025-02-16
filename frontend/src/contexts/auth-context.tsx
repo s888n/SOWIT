@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect, useContext} from "react";
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8000/api";
+const BASE_URL = import.meta.env.VITE_API_URL as string;
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         console.log(response)
         if (response.status === 200) {  // Or another suitable success code
           setIsAuthenticated(true);
-          // setUser(response.data);
+          setUser(response.data);
         } else {
             throw new Error('Failed to authenticate');
         }

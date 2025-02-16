@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { GithubButton } from "./github-button";
+import { useNavigate } from "react-router";
 export function SignupForm({
   className,
   setIsLogin,
@@ -17,24 +18,15 @@ export function SignupForm({
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-    // const response = await register(username, password, confirmPassword) as any;
-    // if (response?.status === 200) {
-    //   setIsAuthenticated(true);
-    //   navigate("/");
-    // } else {
-    //   // map over the response.data object and get the first error
-    //   const errorResponse = response.data;
-    //   const error = Object.keys(errorResponse).map((key) => errorResponse[key]);
-    //   setError(error[0]);
-    // }
     await registerUser(username, password, confirmPassword);
+    navigate("/");
   };
   return (
     <form

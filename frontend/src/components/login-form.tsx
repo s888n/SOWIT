@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
-// import { useNavigate, Navigate} from "react-router";
+import { useNavigate} from "react-router";
 import { GithubButton } from "./github-button";
 export function LoginForm({
   className,
@@ -13,22 +13,15 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<"form"> & {
   setIsLogin: (value: boolean) => void;
 }) {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { loginUser} = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await loginUser(username, password);
-    // if (response.status === 200) {
-    //   setIsAuthenticated(true);
-    //   navigate("/");
-    // } else {
-    //   const errorResponse = response?.data;
-    //   const error = Object.keys(errorResponse).map((key) => errorResponse[key]);
-    //   setError(error[0]);
-    // }
+    await loginUser(username, password)
+    navigate("/");
   };
   return (
     <form

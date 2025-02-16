@@ -23,12 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY", default="django-insecure-key")
+SECRET_KEY = os.environ.get("DJANGO_SECRET", default="not_so_secret")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", default=True)
+DEBUG = os.environ.get("DJANGO_DEBUG", default=True)
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default=["*"])
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", default=["*"]).split(",")
 
 AUTH_USER_MODEL = "users.User"
 
@@ -42,10 +42,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'rest_framework',
-    'rest_framework.authtoken',
-	'rest_framework_simplejwt.token_blacklist',
-    'corsheaders',
+    "rest_framework",
+    "rest_framework.authtoken",
+    "rest_framework_simplejwt.token_blacklist",
+    "corsheaders",
 ]
 
 INSTALLED_APPS += [
@@ -93,8 +93,12 @@ WSGI_APPLICATION = "conf.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": os.getenv("DATABASE_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": os.getenv("DATABASE_NAME", os.path.join(BASE_DIR, "db.sqlite3")),
+        "USER": os.getenv("DATABASE_USER", ""),
+        "PASSWORD": os.getenv("DATABASE_PASSWORD"),
+        "HOST": os.getenv("DATABASE_HOST", ""),
+        "PORT": os.getenv("DATABASE_PORT", ""),
     }
 }
 
@@ -118,12 +122,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
-	'DEFAULT_AUTHENTICATION_CLASSES': [
-        'users.authentication.TokenAuthentication',
-	],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ]
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "users.authentication.TokenAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
 }
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -142,57 +146,31 @@ USE_TZ = True
 
 
 STATIC_URL = "static/"
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+MEDIA_URL = "/media/"
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-AUTH_COOKIE = 'access_token'
-REFRESH_AUTH_COOKIE = 'refresh_token'
+AUTH_COOKIE = "access_token"
+REFRESH_AUTH_COOKIE = "refresh_token"
 SIMPLE_JWT = {
-	'ACCESS_TOKEN_LIFETIME': timedelta(hours=5),
-	'REFRESH_TOKEN_LIFETIME': timedelta(hours=24),
-    'ROTATE_REFRESH_TOKENS': True,
-	'BLACKLIST_AFTER_ROTATION': True,
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(hours=24),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
 }
 
 
 CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SECURE = True
 
-GOOGLE_CLIENT_ID = "17844772652-sq6oce9idml1gkku15b4nj7e6pk0rc92.apps.googleusercontent.com"
-GOOGLE_SECRET = "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"
-GITHUB_CLIENT_ID = "Ov23liVU4xODV3TFiP6a"
-GITHUB_SECRET = "0b536097f9c2dbd261ca6325ec0353528350f197"
-# GOOGLE_REDIRECT_URI = "http://localhost:8000/google/callback"
-# SOCIALACCOUNT_PROVIDERS = {
-#     "google": {
-#         # For each OAuth based provider, either add a ``SocialApp``
-#         # (``socialaccount`` app) containing the required client
-#         # credentials, or list them here:
-#         "APP": {
-#             "client_id": "17844772652-sq6oce9idml1gkku15b4nj7e6pk0rc92.apps.googleusercontent.com",
-#             "secret": "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",
-#             "key": "",
-#             "scope": ["profile", "email"],
-#         }
-#     },
-#     "github": {
-#         "APP": {
-#             "client_id": "Ov23liVU4xODV3TFiP6a",
-#             "secret": "0b536097f9c2dbd261ca6325ec0353528350f197",
-#             "key": "",
-#         }
-#     },
-# }
-
-# CORS_ALLOWED_ORIGINS = os.environ.get("COORS_ALLOWED_ORIGINS", default=["http://localhost:3000", "http://127.0.0.1:3000"])
+GITHUB_CLIENT_ID = os.environ.get("GITHUB_CLIENT_ID", default="")
+GITHUB_SECRET = os.environ.get("GITHUB_SECRET", default="")
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-

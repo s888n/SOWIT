@@ -1,23 +1,27 @@
 import { PolygonCard } from "./polygon-card"
-import { useMap } from "@/contexts/map-context"
-interface Polygon {
-  id: string
-  name: string
-  color: string
-  thumbnail: string
-  region: string
-  area: number
-  geometry: any
-}
 
+interface Polygon {
+  id: string;
+  name: string;
+  description: string;
+  thumbnail: string;
+  area: number;
+  coordinates: any;
+}
 interface PolygonListProps {
-  setShowModal: (value: boolean) => void
+
+  polygons: Polygon[];
+  handleView: (polygon: Polygon) => void;
+  handleEdit: (polygon : Polygon) => void;
+  handleDelete: (polygon : Polygon) => void;
 }
 
 export function PolygonList({
-  setShowModal
+  polygons,
+  handleView,
+  handleEdit,
+  handleDelete,
  }: PolygonListProps) {
-    const { polygons } = useMap()
     return (
       <div className="overflow-y-auto h-[calc(50vh-5rem)] md:h-[calc(100vh-10rem)] pr-2">
         {polygons.length === 0 ? (
@@ -27,10 +31,10 @@ export function PolygonList({
             {polygons.map((polygon: Polygon) => (
               <PolygonCard
                 key={polygon.id}
-                {...polygon}
-                onView={() => console.log("View", polygon.id)}
-                onEdit={() => setShowModal(true)}
-                onDelete={() => console.log("Delete", polygon.id)}
+                polygon={polygon}
+                onView={handleView}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
               />
             ))}
           </>

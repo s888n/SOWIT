@@ -9,32 +9,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-// const mockPolygon = {
-//   id: "1",
-//   name: "Polygon 1",
-//   color: "#D20C0C",
-//   thumbnail: "/polygon.png",
-//   region: "North",
-//   area: 100,
-//   geometry: {
-//     type: "Polygon",
-//     coordinates: [
-//       [
-//         [-91.44552969345338, 45.58637769684887],
-//         [-93.88964918375137, 45.2622563921187],
-//         [-99.76197520308756, 41.00640553785337],
-//         [-91.44552969345338, 45.58637769684887],
-//       ],
-//     ],
-//   },
-// };
 
 interface PolygonProps {
   id: string;
   name: string;
   color: string;
   thumbnail: string;
-  region: string;
   area: number;
   geometry: any;
 }
@@ -99,10 +79,6 @@ export function EditPolygonDialog({
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">Region</Label>
-            <span className="col-span-3">{editedPolygon?.region}</span>
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right">Area</Label>
             <span className="col-span-3">{editedPolygon?.area} sq </span>
           </div>
@@ -112,7 +88,7 @@ export function EditPolygonDialog({
             className="w-full rounded-md"
           />
           <Button type="submit" className="w-full mt-4">
-            'Update'
+            Update
           </Button>
         </form>
       </DialogContent>

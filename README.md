@@ -57,4 +57,4 @@ Using the Mapbox API, users can create polygons on the map and save them to the 
 - 2FA
 - A 3D viewer for the polygons
 
-**ps** Might have some small bugs 🐛
+**PS:** Might have some small bugs 🐛

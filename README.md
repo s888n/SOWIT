@@ -50,7 +50,7 @@ Using the Mapbox API, users can create polygons on the map and save them to the 
 
 ## Features i will add in the future
 
-- User prifile ans settings
+- User profile and settings
 - Edit the polygons data (90 % done)
 - Add a search bar to search for a specific polygon
 - View other users polygons in thier profile

@@ -10,9 +10,9 @@ services:
     networks:
       - sowit
     environment:
-      - VITE_GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
-      - VITE_MAPBOX_TOKEN=${MAPBOX_TOKEN}
-      - VITE_API_URL=${API_URL}
+      - VITE_GITHUB_CLIENT_ID=${VITE_GITHUB_CLIENT_ID}
+      - VITE_MAPBOX_TOKEN=${VITE_MAPBOX_TOKEN}
+      - VITE_API_URL=${VITE_API_URL}
     restart: always
 
   backend:
@@ -36,7 +36,7 @@ services:
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - DATABASE_HOST=${DATABASE_HOST}
       - DATABASE_PORT=${DATABASE_PORT}
-      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - GITHUB_CLIENT_ID=${VITE_GITHUB_CLIENT_ID}
       - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
     restart: always
 

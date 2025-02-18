@@ -1,32 +1,18 @@
-import { createContext, useState, useEffect, useContext} from "react";
-import axios from "axios";
+import React, { createContext, useState, useEffect, useContext } from "react";
+import { API_URL } from "@/lib/constants";
 
-const BASE_URL = import.meta.env.VITE_API_URL as string;
-
-const api = axios.create({
-  baseURL: BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true,
-});
-
-interface User {
+export type User = {
   id: string;
   avatar: string;
   username: string;
-}
+};
 
 export type AuthContextType = {
-  user: User | null;
-  isAuthenticated: boolean;
-  getUser: () => void;
-  loginUser: (username: string, password: string) => void;
-  registerUser: (username: string, password: string, password2: string) => void;
-  logoutUser: () => void;
-  loginWithGithub: (code: string) => void;
-  loading: boolean;
-  setLoading: (value: boolean) => void;
+  auth: {
+    loading: boolean;
+    user: User | null;
+  };
+  setAuth: (auth: any) => void;
 };
 
 const AuthContext = createContext({} as AuthContextType);
@@ -34,98 +20,51 @@ const AuthContext = createContext({} as AuthContextType);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
+  const [auth, setAuth] = useState({ user: null, loading: true });
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const response = await api.get("/user/");
-        console.log(response)
-        if (response.status === 200) {  // Or another suitable success code
-          setIsAuthenticated(true);
-          setUser(response.data);
+        const response = await fetch(`${API_URL}/user/`, {
+          method: "GET",
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setAuth({ user: data, loading: false });
         } else {
-            throw new Error('Failed to authenticate');
+          throw new Error("Failed to authenticate");
         }
       } catch (error) {
-        setIsAuthenticated(false);
+        setAuth({ user: null, loading: false });
         console.error(error);
-      } finally {
-        setLoading(false);
       }
     };
 
     checkAuthStatus();
   }, []);
 
-  const loginUser = async (username: string, password: string) => {
-    const response = await api.post("/login/", { username, password });
-    if (response.status === 200) {
-      setIsAuthenticated(true);
-      setUser(response.data);
-    }
-  };
-  const registerUser = async (
-    username: string,
-    password: string,
-    password2: string
-  ) => {
-    const response = await api.post("/register/", {
-      username,
-      password,
-      password2,
-    });
-    if (response.status === 201) {
-      setIsAuthenticated(true);
-      setUser(response.data);
-    }
-  };
 
-  const loginWithGithub = async (code: string) => {
-    const response = await api.post("/github/", { code });
-    if (response.status === 200) {
-      setIsAuthenticated(true);
-      setUser(response.data);
-    }
-  }
 
-  const logoutUser = async () => {
-    const response = await api.post("/logout/");
-    if (response.status === 200) {
-      setIsAuthenticated(false);
-      setUser(null);
-    }
-  };
+  // const githubLogin = async (code) => {
+  //   try {
+  //     const response = await fetch(`${API_URL}/auth/github/login/`, {
+  //       method: "GET",
+  //       credentials: "include",
+  //     });
+  //     if (response.ok) {
+  //       window.location.href = `${API_URL}/auth/github/login/`;
+  //     } else {
+  //       throw new Error("Failed to authenticate");
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
-  const getUser = async () => {
-    const response = await api.get("/user/");
-    if (response.status === 200) {
-      setUser(response.data);
-    }
-  };
-
-  // const refreshToken = async () => {
-  //   return getAPI("/refresh/");
-  // };
-  const contextData = {
-    isAuthenticated,
-    user,
-    loginUser,
-    registerUser,
-    logoutUser,
-    loading,
-    setLoading,
-    loginWithGithub,
-    getUser,
-  };
+  const contextData = { auth, setAuth };
 
   return (
-    <AuthContext.Provider value={contextData}>
-      {!loading ? children : <div>Loading...</div>}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextData}>{children}</AuthContext.Provider>
   );
 };
 

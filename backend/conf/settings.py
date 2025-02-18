@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET", default="not_so_secret")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DJANGO_DEBUG", default=True)
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", default=["*"]).split(",")
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(",")
 
 AUTH_USER_MODEL = "users.User"
 
@@ -171,6 +171,6 @@ SESSION_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SECURE = True
 
 GITHUB_CLIENT_ID = os.environ.get("GITHUB_CLIENT_ID", default="")
-GITHUB_SECRET = os.environ.get("GITHUB_SECRET", default="")
+GITHUB_SECRET = os.environ.get("GITHUB_CLIENT_SECRET", default="")
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True

@@ -6,7 +6,7 @@ import { ModeToggle } from "./components/mode-toggle";
 import Page404 from "./app/404/page";
 import { AuthProvider } from "./contexts/auth-context";
 import PrivateRoute from "./components/private-route";
-
+import RedirectPage from "./app/redirect/page";
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -23,6 +23,7 @@ function App() {
             />
             <Route path="/auth" element={<LoginPage />} />
             <Route path="*" element={<Page404 />} />
+            <Route path="/redirect" element={<RedirectPage />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

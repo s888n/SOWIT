@@ -4,7 +4,7 @@ import { Map } from "@/components/dashboard-map";
 import { createPolygon, getPolygons, deletePolygon } from "@/api/api";
 // import { PolygonModal } from "@/components/edit-polygon-modal";
 import { useEffect, useState } from "react";
-
+import { useAuth } from "@/contexts/auth-context";
 interface Polygon {
   id: string;
   name: string;
@@ -13,7 +13,8 @@ interface Polygon {
   area: number;
   coordinates: any;
 }
-export default function Home() {
+export default function DashboardPage() {
+  const { auth } = useAuth();
   const [polygons, setPolygons] = useState<Polygon[]>([]);
   const [selectedPolygon, setSelectedPolygon] = useState<Polygon | null>(null);
 
@@ -66,7 +67,10 @@ export default function Home() {
   }, []);
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      {/* <Header username={auth.user.username} avatar={auth.user.avatar} /> */}
+      {auth.user && (
+        <Header username={auth.user.username} avatar={auth.user.avatar} />
+      )}
       <div className="flex flex-col md:flex-row flex-1">
         <div className="w-full md:w-2/5 lg:w-1/3 p-4 border-b md:border-b-0 md:border-r order-last md:order-first">
           <h2 className="text-xl font-semibold mb-4">Polygons</h2>

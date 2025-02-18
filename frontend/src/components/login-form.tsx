@@ -4,8 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
-import { useNavigate} from "react-router";
+import { useNavigate } from "react-router";
 import { GithubButton } from "./github-button";
+import { API_URL } from "@/lib/constants";
 export function LoginForm({
   className,
   setIsLogin,
@@ -14,14 +15,36 @@ export function LoginForm({
   setIsLogin: (value: boolean) => void;
 }) {
   const navigate = useNavigate();
-  const { loginUser} = useAuth();
+  const { setAuth } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const [error, setError] = useState<string | null>(null);
+  console.log("API_URL", API_URL);
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    await loginUser(username, password)
-    navigate("/");
+    setError(null);
+    try {
+      const response = await fetch(`${API_URL}/login/`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Login failed");
+      }
+      const data = await response.json();
+      console.log("login data : ", data);
+      setAuth({ user: data, loading: false });
+      navigate("/");
+    } catch (err: any) {
+      setAuth({ user: null, loading: false });
+      setError(err.message);
+    }
   };
   return (
     <form
@@ -63,20 +86,19 @@ export function LoginForm({
             Or continue with
           </span>
         </div>
-        <GithubButton  />
+        <GithubButton />
       </div>
       <div className="text-center text-sm">
         Don&apos;t have an account?{" "}
         <button
-          type="button"
+          type="submit"
           onClick={() => setIsLogin(false)}
           className="underline underline-offset-4"
         >
           Sign up
         </button>
       </div>
-      <div className="text-center text-sm">
-      </div>
+      {error && <div className="text-red-500 text-sm text-center">{error}</div>}
     </form>
   );
 }

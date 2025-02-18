@@ -1,11 +1,12 @@
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { useAuth } from "@/contexts/auth-context";
 import { GithubButton } from "./github-button";
+import { useAuth } from "@/contexts/auth-context";
 import { useNavigate } from "react-router";
+import { API_URL } from "@/lib/constants";
 export function SignupForm({
   className,
   setIsLogin,
@@ -13,20 +14,37 @@ export function SignupForm({
 }: React.ComponentPropsWithoutRef<"form"> & {
   setIsLogin: (value: boolean) => void;
 }) {
-  const { registerUser } = useAuth();
+  const navigate = useNavigate();
+  const { setAuth } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [password2, setPassword2] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
+    setError(null);
+    try {
+      const response = await fetch(`${API_URL}/register/`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password, password2 }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Login failed");
+      }
+      const data = await response.json();
+      console.log("register data : ", data);
+      setAuth({ user: data, loading: false });
+      navigate("/");
+    } catch (err: any) {
+      setAuth({ user: null, loading: false });
+      setError(err.message);
     }
-    await registerUser(username, password, confirmPassword);
-    navigate("/");
   };
   return (
     <form
@@ -69,20 +87,20 @@ export function SignupForm({
             id="password2"
             type="password"
             required
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            value={password2}
+            onChange={(e) => setPassword2(e.target.value)}
           />
         </div>
         <Button type="submit" className="w-full">
           Register
         </Button>
-        <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-          <span className="relative z-10 bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
-        </div>
-        <GithubButton />
       </div>
+      <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+        <span className="relative z-10 bg-background px-2 text-muted-foreground">
+          Or continue with
+        </span>
+      </div>
+      <GithubButton />
       <div className="text-center text-sm">
         you have an account?{" "}
         <button
@@ -94,7 +112,9 @@ export function SignupForm({
         </button>
       </div>
       <div className="text-center text-sm">
-        {error && <div className="text-red-500">{error}</div>}
+        {error && (
+          <div className="text-red-500 text-sm text-center">{error}</div>
+        )}
       </div>
     </form>
   );

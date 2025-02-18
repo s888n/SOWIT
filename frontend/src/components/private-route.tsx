@@ -3,9 +3,9 @@ import { Navigate } from "react-router";
 import { useAuth } from "@/contexts/auth-context";
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { auth } = useAuth();
 
-  if (loading) {
+  if (auth.loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <h1 className="text-2xl font-bold">Loading...</h1>
@@ -13,7 +13,7 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  return !isAuthenticated ? <Navigate to="/auth" /> : <>{children}</>;
+  return auth.user ? <>{children}</> : <Navigate to="/auth" />;
 };
 
 export default PrivateRoute;

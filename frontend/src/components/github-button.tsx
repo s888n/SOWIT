@@ -1,28 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
-import { useSearchParams} from "react-router";
-import { useAuth } from "@/contexts/auth-context";
-
-
+import { GITHUB_CLIENT_ID } from "@/lib/constants";
 export function GithubButton() {
-  const [searchParams] = useSearchParams();
-  const {loginWithGithub} = useAuth();
   const handleGithubLogin = async () => {
-    const url = `https://github.com/login/oauth/authorize?client_id=${
-      import.meta.env.VITE_GITGUB_CLIENT_ID
-    }`;
+    const url = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}`;
     window.location.assign(url);
   };
 
-  const sendCode = async () => {
-    if (searchParams && searchParams.has("code")) {
-      const qcode = searchParams.get("code") ?? '';
-      await loginWithGithub(qcode);
-    }
-  };
-  useEffect(() => {
-    sendCode();
-  }, [searchParams]);
   return (
     <Button variant="outline" className="w-full" onClick={handleGithubLogin}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

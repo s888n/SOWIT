@@ -3,24 +3,40 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTheme } from "./theme-provider";
 import Logo from "@/assets/Logo.png";
 import LogoDark from "@/assets/LogoDark.png";
-import { getUser } from "@/api/api";
-import { useEffect, useState } from "react";
-interface HeaderProps {
-  username: string | null;
-  avatar: string | null;
-}
-const BASE_URL = import.meta.env.VITE_API_URL as string;
+import { API_URL } from "@/lib/constants";
 import { useAuth } from "@/contexts/auth-context";
-export function Header() {
-  const { logoutUser } = useAuth();
+import { useNavigate } from "react-router";
+const BASE_URL = API_URL.replace("/api", "");
+
+interface HeaderProps {
+  username: string;
+  avatar: string;
+}
+export function Header({ username, avatar }: HeaderProps) {
   const { theme } = useTheme();
-  const [user, setUser] = useState<HeaderProps>({ username: null, avatar: null });
-  useEffect(() => {
-    getUser().then((data) => {
-      setUser(data);
-    });
-  }, []);
-  const { username, avatar } = user;
+  const { setAuth } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async (e: any) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`${API_URL}/logout/`, {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Logout failed");
+      }
+      const data = await response.json();
+      console.log(data);
+      setAuth({ user: null, loading: false });
+      navigate("/auth");
+    } catch (err: any) {
+      console.error(err);
+    }
+  };
   return (
     <header className="flex items-center justify-between px-6 py-4  border-b z-10">
       <div className="flex items-center">
@@ -38,9 +54,11 @@ export function Header() {
             src={avatar ? `${BASE_URL}${avatar}` : undefined}
             alt={`${username}'s avatar`}
           />
-          <AvatarFallback>{username ? username.slice(0, 1).toUpperCase() : ''}</AvatarFallback>
+          <AvatarFallback>
+            {username ? username[0].toUpperCase() : "You"}
+          </AvatarFallback>
         </Avatar>
-        <Button variant="outline" onClick={() => logoutUser()}>
+        <Button variant="outline" onClick={handleLogout}>
           Log out
         </Button>
       </div>

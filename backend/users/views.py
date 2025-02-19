@@ -54,7 +54,6 @@ class GithubLoginView(APIView):
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-        print(request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
             refresh_token, access_token = get_tokens_for_user(user)
@@ -126,7 +125,6 @@ class CookiesRefreshView(APIView):
     def post(self, request):
         refresh_token = request.COOKIES.get(settings.REFRESH_AUTH_COOKIE)
         if not refresh_token:
-            print("no refresh token")
             return Response(status=status.HTTP_400_BAD_REQUEST)
         try:
             token = RefreshToken(refresh_token)

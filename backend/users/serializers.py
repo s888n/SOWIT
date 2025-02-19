@@ -56,9 +56,7 @@ class GithubLoginSerializer(serializers.Serializer):
         code = data.get("code")
         access_token = Github.exchange_code_for_token(code)
         if access_token:
-            print("success:", access_token)
             user_data = Github.get_github_user(access_token)
-            print("user_data:", user_data)
             username = user_data.get("login")
             avatar_url = user_data.get("avatar_url")
             if username is None or avatar_url is None:
@@ -70,12 +68,9 @@ class GithubLoginSerializer(serializers.Serializer):
     def create(self, validated_data):
         user, created = User.objects.get_or_create(username=validated_data["username"])
         if created:
-            print("creating user")
             avatar_url = validated_data["avatar_url"]
             avatar_tmp = NamedTemporaryFile(delete=True)
             avatar_tmp.write(requests.get(avatar_url).content)
             avatar_tmp.flush()
             user.avatar.save(f"{user.username}_avatar.jpg", File(avatar_tmp))
-        if created is False:
-            print("user already exists")
         return user

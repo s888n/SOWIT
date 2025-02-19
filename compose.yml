@@ -2,8 +2,8 @@ services:
   frontend:
     container_name: react
     build: ./frontend
-    ports:
-      - "3000:3000"
+    # ports:
+    #   - "3000:3000"
     volumes:
       - ./frontend:/usr/src/app
       - node_modules:/usr/src/app/node_modules
@@ -18,8 +18,8 @@ services:
   backend:
     container_name: django
     build: ./backend
-    ports:
-      - "8000:8000"
+    # ports:
+    #   - "8000:8000"
     volumes:
       - ./backend:/usr/src/app
     networks:
@@ -51,6 +51,21 @@ services:
       - POSTGRES_DB=${DATABASE_NAME}
       - POSTGRES_USER=${DATABASE_USER}
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+    restart: always
+  proxy:
+    container_name: nginx
+    build: ./proxy
+    networks:
+      - sowit
+    ports:
+      - "443:443"
+    environment:
+      - SERVER_NAME=${SERVER_NAME}
+    volumes:
+      - ./proxy/templates/nginx.conf.template:/etc/nginx/templates/nginx.conf.template
+    depends_on:
+      - frontend
+      - backend
     restart: always
 
 volumes:

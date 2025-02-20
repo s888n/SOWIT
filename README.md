@@ -37,7 +37,8 @@ Using the Mapbox API, users can create polygons on the map and save them to the 
 - Clone the repository
 - Create a `.env` file in the root directory and provide the environment variables like in the `.env.example` file
 - Run `Docker-compose up --build`
-- That's it! The frontend should be running on `https://localhost:443` 
+- That's it! The frontend should be running on `https://localhost:443`
+- Go to `https://localhost:443/api/schema/redoc/` to view the API documentation
 
 ## Features
 

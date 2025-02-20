@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
+    "drf_spectacular",
 ]
 
 INSTALLED_APPS += [
@@ -128,6 +129,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -174,3 +176,12 @@ GITHUB_CLIENT_ID = os.environ.get("GITHUB_CLIENT_ID", default="")
 GITHUB_SECRET = os.environ.get("GITHUB_CLIENT_SECRET", default="")
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "SOWIT API",
+    "DESCRIPTION": "A Demo app for internship at SOWIT",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAuthenticated"],
+    # "SERVE_AUTHENTICATION": ["users.authentication.TokenAuthentication"],
+}

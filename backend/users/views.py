@@ -20,6 +20,7 @@ import requests
 from django.core.files import File
 from tempfile import NamedTemporaryFile
 from .models import User
+from drf_spectacular.utils import extend_schema
 
 
 def get_tokens_for_user(user):
@@ -69,6 +70,7 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = []
 
+    @extend_schema(request=LoginSerializer, responses=None)
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -83,6 +85,9 @@ class LoginView(APIView):
 
 
 class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(request=None, responses=None)
     def post(self, request):
         refresh_token = request.COOKIES.get(settings.REFRESH_AUTH_COOKIE)
         response = Response(
@@ -97,6 +102,7 @@ class RegisterView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = []
 
+    @extend_schema(request=RegisterSerializer, responses=None)
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
@@ -113,6 +119,7 @@ class RegisterView(APIView):
 class UserView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(request=UserSerializer, responses=None)
     def get(self, request):
         user = request.user
         serializer = UserSerializer(user)
@@ -122,6 +129,7 @@ class UserView(APIView):
 class CookiesRefreshView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(request=None, responses=None)
     def post(self, request):
         refresh_token = request.COOKIES.get(settings.REFRESH_AUTH_COOKIE)
         if not refresh_token:

@@ -37,6 +37,6 @@ class TokenAuthenticationScheme(OpenApiAuthenticationExtension):
 
     def get_security_definition(self, auto_schema):
         return [
-            {"type": "apiKey", "in": "Cookie", "name": settings.AUTH_COOKIE},
+            {"type": "apiKey", "in": "cookie", "name": settings.AUTH_COOKIE},
             {"type": "apiKey", "in": "cookie", "name": settings.REFRESH_AUTH_COOKIE},
         ]

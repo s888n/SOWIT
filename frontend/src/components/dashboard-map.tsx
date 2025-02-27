@@ -6,7 +6,6 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import "mapbox-gl-style-switcher/styles.css";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 
-
 interface Polygon {
   id: string;
   name: string;
@@ -31,36 +30,25 @@ interface MapProps {
 }
 
 const ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN as string;
-  
+
 import { SavePolygonDialog } from "./save-polygon-modal";
 import { useState } from "react";
-export function Map({
-  // polygons,
-  selectedPolygon,
-  handleSave,
-}: MapProps) {
+export function Map({ polygons, selectedPolygon, handleSave }: MapProps) {
+
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const drawRef = useRef<null>(null);
   const [newPolygon, setNewPolygon] = useState<any | null>(null);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const fullScreen = new mapboxgl.FullscreenControl();
   const navigation = new mapboxgl.NavigationControl();
-    const geolocate = new mapboxgl.GeolocateControl({
-      positionOptions: {
-          enableHighAccuracy: true
-      },
-      trackUserLocation: true
+  const geolocate = new mapboxgl.GeolocateControl({
+    positionOptions: {
+      enableHighAccuracy: true,
+    },
+    trackUserLocation: true,
   });
 
-  const draw = new MapboxDraw({
-    displayControlsDefault: false,
-    controls: {
-      trash: true,
-      polygon: true,
-      line_string: false,
-    },
-    defaultMode: "draw_polygon",
-  });
   useEffect(() => {
     mapboxgl.accessToken = ACCESS_TOKEN;
     mapRef.current = new mapboxgl.Map({
@@ -69,65 +57,46 @@ export function Map({
       zoom: 10,
     });
 
-    mapRef.current.on("load", function () {
-    mapRef.current?.addControl(fullScreen);
-    mapRef.current?.addControl(navigation);
-    mapRef.current?.addControl(geolocate)
-    // draw controls
-    mapRef.current?.addControl(draw);
-  });
-
-    mapRef.current.on("draw.create", function (e) {
-      const features = (e as any).features[0];
-      const geometry = features.geometry;
-      const coordinates = geometry.coordinates;
-      const area = turf.area(turf.polygon(coordinates));
-      const thumbnailURL = fetchThumbnail(features.geometry, "#FF0000");
-      setNewPolygon({
-        area,
-        coordinates,
-        thumbnailURL,
-      });
-      setShowSaveDialog(true);
+    drawRef.current = new MapboxDraw({
+      displayControlsDefault: false,
+      controls: {
+        polygon: true,
+        line_string: false,
+      },
+      defaultMode: "draw_polygon",
     });
-    // THIS FOR LATER USE TO DISPLAY THE POLYGONS ON THE MAP
-    // mapRef.current.on("load", () => {
-    
-    // polygons.forEach((polygon) => {
-    //   mapRef.current?.addSource(polygon.name, {
-    //     type: "geojson",
-    //     data: {
-    //       type: "Feature",
-    //       properties: {},
-    //       geometry: {
-    //         type: "Polygon",
-    //         coordinates: polygon.coordinates,
-    //       }
-    //     },
-    //   });
-    //   // adding the layers
-    //   mapRef.current?.addLayer({
-    //     id: polygon.name,
-    //     type: "fill",
-    //     source: polygon.id,
-    //     layout: {
-    //       visibility: 'visible',
-    //     },
-    //     paint: {
-    //       "fill-color": "#D20C0C",
-    //       "fill-opacity": 0.5,
-    //     },
-    //   });
-    // }
-    // );
-    // });
-
+    // add controls
+    mapRef.current?.addControl(drawRef.current);
+    mapRef.current.on("load", function () {
+      mapRef.current?.addControl(fullScreen);
+      mapRef.current?.addControl(navigation);
+      mapRef.current?.addControl(geolocate);
+    });
+    mapRef.current.on("draw.create", handleDrawCreate);
     return () => {
       mapRef.current?.remove();
     };
   }, []);
 
-  // THIS USEEFFECT IS FOR FLY ONLY , DONT TOUCH IT
+  useEffect(() => {
+    if (!mapRef.current || !drawRef.current) return;
+    drawRef.current?.deleteAll();
+    polygons.forEach((polygon) => {
+      if (polygon.coordinates) {
+        const feature = {
+          id: polygon.id,
+          type: "Feature",
+          properties: {},
+          geometry: {
+            type: "Polygon",
+            coordinates: polygon.coordinates,
+          },
+        };
+        drawRef.current.add(feature);
+      }
+    });
+  }, [polygons]);
+
   useEffect(() => {
     if (mapRef.current && selectedPolygon) {
       console.log("Selected Polygon", selectedPolygon);
@@ -144,7 +113,20 @@ export function Map({
   const onClose = () => {
     setShowSaveDialog(false);
     setNewPolygon(null);
+  };
 
+  const handleDrawCreate = (e: any) => {
+    const features = (e as any).features[0];
+    const geometry = features.geometry;
+    const coordinates = geometry.coordinates;
+    const area = turf.area(turf.polygon(coordinates));
+    const thumbnailURL = fetchThumbnail(features.geometry, "#FF0000");
+    setNewPolygon({
+      area,
+      coordinates,
+      thumbnailURL,
+    });
+    setShowSaveDialog(true);
   };
 
   return (
@@ -186,4 +168,3 @@ const fetchThumbnail = (geometry: any, color: string) => {
 
   return thumbnailURL;
 };
-

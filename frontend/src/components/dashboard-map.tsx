@@ -34,12 +34,12 @@ const ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN as string;
 import { SavePolygonDialog } from "./save-polygon-modal";
 import { useState } from "react";
 export function Map({ polygons, selectedPolygon, handleSave }: MapProps) {
-
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const drawRef = useRef<null>(null);
   const [newPolygon, setNewPolygon] = useState<any | null>(null);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
+
   const fullScreen = new mapboxgl.FullscreenControl();
   const navigation = new mapboxgl.NavigationControl();
   const geolocate = new mapboxgl.GeolocateControl({
@@ -73,8 +73,9 @@ export function Map({ polygons, selectedPolygon, handleSave }: MapProps) {
       mapRef.current?.addControl(geolocate);
     });
     mapRef.current.on("draw.create", handleDrawCreate);
+
     return () => {
-      mapRef.current?.remove();
+      if (mapRef.current) mapRef.current.remove();
     };
   }, []);
 
@@ -113,6 +114,14 @@ export function Map({ polygons, selectedPolygon, handleSave }: MapProps) {
   const onClose = () => {
     setShowSaveDialog(false);
     setNewPolygon(null);
+    if (drawRef.current) {
+      const allFeatures = drawRef.current.getAll();
+      if (allFeatures.features.length > 0) {
+        drawRef.current.delete(
+          allFeatures.features[allFeatures.features.length - 1].id
+        );
+      }
+    }
   };
 
   const handleDrawCreate = (e: any) => {

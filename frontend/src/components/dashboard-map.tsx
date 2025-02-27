@@ -61,11 +61,8 @@ export function Map({ polygons, selectedPolygon, handleSave }: MapProps) {
       displayControlsDefault: false,
       controls: {
         polygon: true,
-        line_string: false,
       },
-      defaultMode: "draw_polygon",
     });
-    // add controls
     mapRef.current?.addControl(drawRef.current);
     mapRef.current.on("load", function () {
       mapRef.current?.addControl(fullScreen);
